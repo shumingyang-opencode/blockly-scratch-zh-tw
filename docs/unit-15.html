@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 15 · Blockly 技術面入門 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="給開發者的 Blockly：如何做出自己的積木編輯器。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 15 · Blockly 技術面入門</h1>
+  <p class="subtitle">自訂積木、嵌入編輯器、Blockly Games 原理</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>15.1 Blockly 開發者的視角</h2>
+<p>對開發者而言，Blockly 是<strong>一個 JavaScript 程式庫</strong>，你把它嵌進自己的網頁，就能得到一個積木編輯器。</p>
+<div class="pipe"><span class="step">引入 Blockly</span><span class="arr">→</span><span class="step">定義積木工具箱</span><span class="arr">→</span><span class="step">設定生成器</span><span class="arr">→</span><span class="step">執行/匯出</span></div>
+
+<h2>15.2 核心組成</h2>
+<table>
+<tr><th>元件</th><th>功能</th></tr>
+<tr><td>Toolbox（工具箱）</td><td>定義有哪些積木、分類</td></tr>
+<tr><td>Workspace（工作區）</td><td>使用者拖放積木的畫布</td></tr>
+<tr><td>Block 定義</td><td>積木的外觀與參數</td></tr>
+<tr><td>Generator（生成器）</td><td>積木 → 目標語言程式碼</td></tr>
+<tr><td>Serialization</td><td>儲存/載入積木（XML/JSON）</td></tr>
+</table>
+
+<h2>15.3 自訂一個積木</h2>
+<div class="demo-block"><div class="demo-label">範例（簡化）</div><pre>// 定義積木「打招呼」
+Blockly.Blocks['say_hi'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField('打招呼');
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(160);
+  }
+};
+
+// 生成 JavaScript
+Blockly.JavaScript['say_hi'] = function(block) {
+  return 'console.log("你好！");
+';
+};
+</pre></div>
+<div class="callout"><strong>重點：</strong>每個積木要<strong>定義外觀</strong>（init）也要<strong>定義程式碼輸出</strong>（generator）——缺一不可。</div>
+
+<h2>15.4 嵌入網頁的最小流程</h2>
+<ol>
+<li>載入 blockly 的 script。</li>
+<li>建立一個 div 當工作區。</li>
+<li>設定 toolbox JSON（積木清單）。</li>
+<li>用 Blockly.inject(div, config) 啟動。</li>
+<li>呼叫 Blockly.JavaScript.workspaceToCode() 拿程式碼。</li>
+</ol>
+<div class="callout warn"><strong>給自學者的路：</strong>先讀官方 playground 範例 → 改 toolbox → 加一個自訂積木 → 跑通生成器。小步前進。</div>
+
+<h2>15.5 Worked Example：你的第一個 Blockly 頁面</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>目標：一個有「前進/後退/左轉」的迷你控制工具
+1. toolbox 定義三個積木（各帶角度參數）
+2. 生成器輸出到一組指令字串
+3. 按下「執行」→ 依序播放指令（可串 Blockly Games 迷宮概念）
+
+完成標竿：使用者能拼出「前進→右轉→前進」走出迷宮。
+</pre></div>
+<p>動手：找一個 Blockly 官方範例，改 toolbox 加入「打招呼」積木，並讓它輸出 JS。</p>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>說明 Blockly 作為程式庫的組成。</li><li>定義一個簡單的自訂積木。</li><li>描述把 Blockly 嵌入網站的步驟。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-14.html">單元 14 · 從積木到文字程式</a>。</li><li>下一篇：<a href="unit-16.html">單元 16 · 教學設計</a>。</li><li><a href="../glossary.html">術語表</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-16.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 16 · 教學設計：用積木教概念</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 9 · 遊戲設計專案 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="設計一款可玩的遊戲：得分、生命與碰撞判定，含完整 Worked Example。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 9 · 遊戲設計專案</h1>
+  <p class="subtitle">得分/生命/碰撞、遊戲迴圈</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>9.1 遊戲的骨架</h2>
+<p>幾乎所有積木遊戲都有同一套<strong>遊戲迴圈</strong>：</p>
+<div class="pipe"><span class="step">移動</span><span class="arr">→</span><span class="step">碰撞判斷</span><span class="arr">→</span><span class="step">更新分數/生命</span><span class="arr">→</span><span class="step">結束判定</span><span class="arr">→</span><span class="step">重來</span></div>
+
+<h2>9.2 碰撞偵測</h2>
+<table>
+<tr><th>積木</th><th>偵測什麼</th></tr>
+<tr><td>碰到 ( ) ?</td><td>碰到某精靈/顏色/邊緣</td></tr>
+<tr><td>距離 ( )</td><td>與某角色的距離</td></tr>
+<tr><td>按下 ( ) ?</td><td>鍵盤或滑鼠輸入</td></tr>
+</table>
+<div class="demo-block"><div class="demo-label">範例</div><pre>當 ⚑ 被點擊
+重複無限次
+  如果 <碰到 [蘋果] ? > 那麼
+    將 [分數] 增加 1
+    廣播「吃到蘋果」
+    隨機位置出現新蘋果
+</pre></div>
+
+<h2>9.3 得分、生命與結束</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>變數：分數、生命
+重複無限次
+  如果 <碰到 [炸彈] ? > 那麼
+    將 [生命] 增加 -1
+    播放聲音 [爆炸]
+  如果 <生命 = 0> 那麼
+    說出「遊戲結束，分數：」+ 分數
+    停止 [全部]
+</pre></div>
+
+<h2>9.4 Worked Example：接蘋果遊戲</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>角色：籃子（玩家）、蘋果、炸彈
+籃子：
+  當 ⚑ 被點擊
+  重複無限次
+    定位到 x:(滑鼠x) y:(-160)   ← 跟著滑鼠走
+蘋果：
+  當 ⚑ 被點擊
+  重複無限次
+    移到隨機x, y:180
+    重複直到 碰到籃子 或 y<-180
+      將 y 改變 -3
+    如果 碰到籃子: 分數+1
+    否則: 生命-1
+炸彈：同蘋果，但碰到「分數-2」
+結束：生命=0 → Game Over
+</pre></div>
+<div class="callout warn"><strong>除錯重點：</strong>遊戲最容易出錯的是「碰撞沒反應」——先用「碰到？說出結果」積木確認偵測生效。</div>
+
+<h2>9.5 練習</h2>
+<ol>
+<li>為你的遊戲加「困難度」：分數越高，蘋果掉越快。</li>
+<li>設計一個「分數 × 生命」的結束畫面。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>用碰撞偵測實作得分與生命。</li><li>設計遊戲迴圈（移動/碰撞/更新/結束）。</li><li>完成一款可玩的遊戲專案。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-08.html">單元 8 · 動畫與故事專案</a>。</li><li>下一篇：<a href="unit-10.html">單元 10 · 互動藝術專案</a>。</li><li><a href="../projects.html">專案速查</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-10.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 10 · 互動藝術專案</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

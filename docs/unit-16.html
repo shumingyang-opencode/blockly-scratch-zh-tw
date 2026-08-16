@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 16 · 教學設計：用積木教概念 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="把抽象程式概念教給小孩：不插電遊戲、流程圖與積木對應。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 16 · 教學設計：用積木教概念</h1>
+  <p class="subtitle">不插電活動、積木與流程圖、學習理論</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>16.1 為什麼要「不插電」</h2>
+<p><strong>不插電（Unplugged）活動</strong>不用電腦，用身體、紙卡、遊戲來教程式概念。好處：<strong>零設備、聚焦概念、全班參與</strong>。</p>
+<div class="callout"><strong>理念：</strong>先讓學生「用身體體驗演算法」，再上台用積木做——概念先行，工具後到。</div>
+
+<h2>16.2 經典不插電活動</h2>
+<table>
+<tr><th>活動</th><th>教的概念</th><th>做法</th></tr>
+<tr><td>機器人指令</td><td>序列</td><td>一人當機器人，一人下「前進/左轉」指令</td></tr>
+<tr><td>分類撲克牌</td><td>演算法/條件</td><td>用「比大小」規則把牌排序</td></tr>
+<tr><td>猜數字樹</td><td>二分搜尋</td><td>用「是/否」問題猜出數字</td></tr>
+<tr><td>跳舞迴圈</td><td>迴圈</td><td>「跳3次×2組」= 迴圈指令</td></tr>
+<tr><td>IF 卡片</td><td>條件</td><td>「如果你是男生→左走，女生→右走」</td></tr>
+</table>
+
+<h2>16.3 流程圖 ↔ 積木</h2>
+<div class="pipe"><span class="step">流程圖</span><span class="arr">（畫出步驟）</span><span class="step">→</span><span class="step">積木</span><span class="arr">（拼出來）</span></div>
+<div class="demo-block"><div class="demo-label">範例</div><pre>流程圖：準備早餐
+[開始] → [煮水] → [水滾？]──是→[泡茶]
+                    └──否→[再等]
+          ↑__________________|
+
+對應積木：
+  重複直到 <水滾>：
+    等待 1 秒
+  泡茶
+</pre></div>
+
+<h2>16.4 一節入門課的結構（45 分鐘）</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>0-8'   不插電：機器人指令（身體演算法）
+8-15'  討論：把指令翻譯成流程圖
+15-25' 上機：在 Scratch 用積木做出「機器人走方格」
+25-35' 挑戰：加入迴圈讓指令變短
+35-45' 分享 + 省思：「程式 = 精確的指令」
+
+課後：讓學生用流程圖規劃「放學回家」再寫成積木。
+</pre></div>
+<div class="callout info"><strong>教學哲學：</strong>「先用手，再畫圖，最後拼積木」——三個層次都走過，概念才真的內化。</div>
+
+<h2>16.5 練習</h2>
+<ol>
+<li>設計一個 5 分鐘的「機器人指令」不插電活動。</li>
+<li>把「上學流程」畫成流程圖，再用積木概念描述。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>用不插電活動教抽象概念。</li><li>把流程圖與積木對應。</li><li>設計一節視覺化程式的入門課。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-15.html">單元 15 · Blockly 技術面入門</a>。</li><li>下一篇：<a href="unit-17.html">單元 17 · 課堂與專案式學習</a>。</li><li><a href="../glossary.html">術語表</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-17.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 17 · 課堂與專案式學習</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

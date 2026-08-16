@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 12 · Blockly 衍生產物探索 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="同一座積木引擎的不同舞台：用 MakeCode 控制 Micro:bit。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 12 · Blockly 衍生產物探索</h1>
+  <p class="subtitle">MakeCode、App Inventor、Blockly Games、Micro:bit</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>12.1 同一顆引擎，不同的舞台</h2>
+<p>Blockly 家族的每個工具都共用<strong>積木邏輯</strong>，但舞台不同：</p>
+<table>
+<tr><th>工具</th><th>舞台</th><th>你能做什麼</th></tr>
+<tr><td><strong>MakeCode</strong></td><td>Micro:bit 板子</td><td>LED、感測器、無線電、機器人</td></tr>
+<tr><td><strong>App Inventor</strong></td><td>Android 手機</td><td>App、感測器、地圖</td></tr>
+<tr><td><strong>Blockly Games</strong></td><td>瀏覽器小遊戲</td><td>學序列/迴圈/條件</td></tr>
+<tr><td><strong>Scratch 3</strong></td><td>舞台</td><td>動畫、遊戲、故事</td></tr>
+</table>
+<div class="callout"><strong>核心觀點：</strong>學會 MakeCode 的積木 = 會操作 Micro:bit；而「事件、迴圈、變數」這些概念跟 Scratch 完全一樣。</div>
+
+<h2>12.2 MakeCode 與 Micro:bit 快速上手</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>目標：按按鈕顯示表情
+on button A pressed
+  show icon 😀
+on button B pressed
+  show icon 😢
+on shake
+  show string "哦不！"
+
+燒錄：MakeCode 網頁 → 下載 .hex → 拖進板子
+</pre></div>
+
+<h2>12.3 從積木到「真的裝置」</h2>
+<ul>
+<li>Scratch 的「當按鍵按下」→ MakeCode 的「on button pressed」。</li>
+<li>Scratch 的「變數」→ MakeCode 的「let 變數」。</li>
+<li>Scratch 的「碰到」→ MakeCode 的「加速度 > 門檻」。</li>
+</ul>
+<div class="callout info"><strong>教學價值：</strong>從螢幕到實體，學生會發現「程式真的能控制世界」——這是 STEAM 整合的橋（見單元 18）。</div>
+
+<h2>12.4 Worked Example：計步器（MakeCode）</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>變數 steps = 0
+on shake
+  change steps by 1
+  show number steps
+on button A pressed
+  set steps to 0      ← 重設
+on button B pressed
+  show number steps   ← 查看總步數
+
+延伸：加 LED 動畫慶祝（每 100 步播音樂）。
+</pre></div>
+<p>動手：在 MakeCode 做一個「按 A 重設、按 B 查看」的計步器，並燒錄到 Micro:bit。</p>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>列出 Blockly 的主要衍生工具。</li><li>用 MakeCode 控制 Micro:bit 做出專案。</li><li>說明同一套積木邏輯在不同工具的運用。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-11.html">單元 11 · 資料與模擬專案</a>。</li><li>下一篇：<a href="unit-13.html">單元 13 · Scratch vs Blockly 對照</a>。</li><li><a href="../blocks.html">積木速查</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-13.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 13 · Scratch vs Blockly 詳細對照</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

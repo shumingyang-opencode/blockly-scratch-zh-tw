@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 1 · 概論：視覺化程式設計為什麼 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="為什麼全世界都從積木開始學程式：免語法、即回饋、可玩的學習。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 1 · 概論：視覺化程式設計為什麼</h1>
+  <p class="subtitle">積木邏輯、教育價值、兩工具定位、誰適合</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>1.1 為什麼從積木開始</h2>
+<p><strong>視覺化程式設計</strong>讓你把「積木」拖到畫布上拼起來，就完成一支程式。它把程式設計的兩大難關——<strong>語法</strong>與<strong>邏輯</strong>——分開處理：先專注邏輯，語法之後再說。</p>
+<table>
+<tr><th>面向</th><th>文字程式</th><th>積木程式</th></tr>
+<tr><td>語法</td><td>要背（分號、括號、縮排）</td><td>免（接頭卡合就對了）</td></tr>
+<tr><td>即時回饋</td><td>編譯/執行後才知道</td><td>拖上去就能看結果</td></tr>
+<tr><td>除錯</td><td>看錯誤訊息</td><td>直覺看積木哪拼錯</td></tr>
+<tr><td>入門年齡</td><td>較高</td><td>小學即可</td></tr>
+</table>
+<div class="callout"><strong>核心觀念：</strong>積木程式不是「簡化版的程式」，而是<strong>同一套邏輯的另一種表達</strong>——學會積木，等於學會「演算法思維」，之後轉文字只是「翻譯」。</div>
+
+<h2>1.2 教育價值</h2>
+<ul>
+<li><strong>計算思維</strong>：拆解問題、找規律、設計演算法。</li>
+<li><strong>創造力</strong>：作品看得見、可分享、有成就感。</li>
+<li><strong>失敗安全</strong>：拼錯就拆掉重拼，允許犯錯。</li>
+<li><strong>跨領域</strong>：遊戲=邏輯+數學，動畫=藝術+程式。</li>
+</ul>
+
+<h2>1.3 Scratch vs Blockly：兩種定位</h2>
+<table>
+<tr><th>面向</th><th>Scratch（MIT）</th><th>Blockly（Google）</th></tr>
+<tr><td>本質</td><td>完整的學習產品</td><td>開源程式庫（引擎）</td></tr>
+<tr><td>目標</td><td>讓學習者做出作品</td><td>讓開發者做出工具</td></tr>
+<tr><td>對象</td><td>學生/教師/創作者</td><td>程式設計師</td></tr>
+<tr><td>代表作</td><td>scratch.mit.edu</td><td>MakeCode、App Inventor</td></tr>
+<tr><td>社群</td><td>大量分享專案</td><td>開發者文件/論壇</td></tr>
+</table>
+<div class="callout info"><strong>一句話：</strong>Scratch 是「商店裡已做好的玩具」，Blockly 是「做玩具的引擎」。兩者都教你積木邏輯，但舞台不同。</div>
+
+<h2>1.4 Worked Example：同一個概念，兩種工具</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>概念：「按按鈕就 +1」
+
+Scratch：
+  當 ⚑ 被點擊
+  重複無限次
+    如果 <按下 [空白鍵] 呢？>
+      將 [分數] 增加 1
+    如果 <分數 = 10>
+      說出 "你贏了！"
+
+MakeCode（Blockly 家族）：
+  on button A pressed
+    change score by 1
+  on start
+    forever
+      if score = 10 then
+        show string "你贏了！"
+</pre></div>
+<p>動手：用一句話說出「Scratch」與「Blockly」最大的不同，並查一個兩者的共同積木。</p>
+
+<h2>1.5 常見迷思</h2>
+<ul>
+<li><strong>「積木程式不是真程式」</strong>——錯。MakeCode 的積木背後就是 JavaScript。</li>
+<li><strong>「只適合小孩」</strong>——錯。Blockly 是專業工具（MakeCode）的核心。</li>
+<li><strong>「學了積木要全部重學」</strong>——不必。邏輯相通，只差語法。</li>
+</ul>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>說出視覺化程式設計為什麼適合入門。</li><li>解釋積木邏輯與文字程式的關係。</li><li>說出 Scratch 與 Blockly 的定位差異。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>下一篇：<a href="unit-02.html">單元 2 · Scratch 全景</a>。</li><li><a href="../glossary.html">術語表</a>：先看積木/腳本定義。</li><li><a href="../blocks.html">積木速查</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-02.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 2 · Scratch 全景</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

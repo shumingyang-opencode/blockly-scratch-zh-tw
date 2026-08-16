@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 5 · 事件與控制流 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="讓程式「聽話」：事件驅動、判斷與重複，含雙工具對照實作。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 5 · 事件與控制流</h1>
+  <p class="subtitle">事件積木、條件、迴圈、雙工具對照</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>5.1 事件：程式怎麼「醒過來」</h2>
+<p><strong>事件（Event）</strong>是讓腳本開始執行的觸發條件。沒有事件，腳本就只是躺著的積木。</p>
+<table>
+<tr><th>工具</th><th>常見事件</th></tr>
+<tr><td>Scratch</td><td>當 ⚑ 被點擊、當 [空白鍵] 按下、當角色被點擊、收到廣播</td></tr>
+<tr><td>MakeCode</td><td>on start、on button A pressed、on shake、on radio received</td></tr>
+</table>
+<div class="callout"><strong>事件驅動思維：</strong>與其問「程式什麼時候跑」，不如問「什麼事情發生時要跑」。這跟真實世界一樣：門鈴響了才去開門。</div>
+
+<h2>5.2 條件：讓程式做決定</h2>
+<div class="demo-block"><div class="demo-label">Scratch</div><pre>當 ⚑ 被點擊
+重複無限次
+  如果 <碰到 [邊緣] 呢？> 那麼
+    說出「到邊界了！」
+    移動 -10 步
+  否則
+    移動 10 步
+</pre></div>
+<div class="demo-block"><div class="demo-label">MakeCode</div><pre>forever
+  if light level < 40 then
+    show string "太暗了"
+  else
+    show string "剛剛好"
+</pre></div>
+
+<h2>5.3 迴圈：讓程式重複</h2>
+<table>
+<tr><th>類型</th><th>Scratch</th><th>MakeCode</th></tr>
+<tr><td>有次數</td><td>重複 10 次</td><td>for index 0 to 9</td></tr>
+<tr><td>無限</td><td>重複無限次</td><td>forever</td></tr>
+<tr><td>條件</td><td>重複直到⋯</td><td>while ⋯ do</td></tr>
+</table>
+<div class="callout info"><strong>為什麼迴圈重要：</strong>迴圈讓「一段積木」反覆使用——程式因此變短、也更好改（改一處等於改全部）。</div>
+
+<h2>5.4 Worked Example：會反彈的貓</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>目標：貓咪在舞台左右來回，碰到邊緣反彈
+Scratch：
+  當 ⚑ 被點擊
+  重複無限次
+    移動 10 步
+    碰到邊緣就反彈      ← 內建積木
+    等待 0.1 秒
+
+挑戰：加入「按空白鍵加速」（速度變數）。
+</pre></div>
+<p>動手：做一個「碰到邊緣反彈」的貓，並加入一個條件讓它在碰到某色時說「到了！」。</p>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>解釋事件驅動與順序程式的差異。</li><li>用條件與迴圈控制流程。</li><li>完成雙工具的控制流實作。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-04.html">單元 4 · 積木與腳本</a>。</li><li>下一篇：<a href="unit-06.html">單元 6 · 變數與運算</a>。</li><li><a href="../blocks.html">積木速查</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-06.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 6 · 變數與運算</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

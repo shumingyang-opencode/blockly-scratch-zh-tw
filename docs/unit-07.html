@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 7 · 精靈/角色與舞台 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="在 Scratch 舞台上讓角色動起來：座標、造型切換與聲音特效。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 7 · 精靈/角色與舞台</h1>
+  <p class="subtitle">座標系統、造型、音效、Scratch 主場</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>7.1 舞台座標系統</h2>
+<p>Scratch 舞台是 <strong>480×360</strong> 的座標空間，中心是 <strong>(0, 0)</strong>：</p>
+<div class="demo-block"><div class="demo-label">座標</div><pre>左上 (-240, 180) ───── 右上 (240, 180)
+        │    中心 (0,0)    │
+左下 (-240, -180) ───── 右下 (240, -180)
+</pre></div>
+<table>
+<tr><th>積木</th><th>功能</th></tr>
+<tr><td>定位到 x:( ) y:( )</td><td>把精靈放到指定座標</td></tr>
+<tr><td>移動 10 步</td><td>朝目前方向移動</td></tr>
+<tr><td>面朝 ( ) 度</td><td>設定方向</td></tr>
+<tr><td>滑行到 x:( ) y:( )</td><td>平滑移動</td></tr>
+</table>
+
+<h2>7.2 造型：角色的「換裝」</h2>
+<ul>
+<li>一個精靈可以有多個<strong>造型（Costume）</strong>。</li>
+<li>連續切換造型 = 動畫（走路、飛翔、跳舞）。</li>
+<li>「下一個造型」積木 + 迴圈 = 最簡單的動畫。</li>
+</ul>
+<div class="demo-block"><div class="demo-label">範例</div><pre>當 ⚑ 被點擊
+重複無限次
+  移動 10 步
+  下一個造型        ← 換一張圖
+  等待 0.2 秒
+</pre></div>
+
+<h2>7.3 聲音與特效</h2>
+<table>
+<tr><th>積木</th><th>功能</th></tr>
+<tr><td>播放聲音</td><td>播放音效</td></tr>
+<tr><td>開始/停止所有聲音</td><td>音樂控制</td></tr>
+<tr><td>圖形特效</td><td>色彩、魚眼、旋轉等視覺特效</td></tr>
+<tr><td>顯示/隱藏</td><td>角色可見性</td></tr>
+</table>
+
+<h2>7.4 Worked Example：跳舞的角色</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>目標：角色跟著音樂跳舞
+當 ⚑ 被點擊
+重複無限次
+  面朝 90 度       ← 向右
+  移動 40 步
+  下一個造型
+  播放鼓聲 1 下
+  等待 0.3 秒
+  面朝 -90 度      ← 向左
+  移動 40 步
+  下一個造型
+  播放鼓聲 2 下
+  等待 0.3 秒
+</pre></div>
+<p>動手：做一個會來回走動並切換造型的角色，加上一段音樂。</p>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>說明舞台座標系統與精靈定位。</li><li>用造型切換做出動作效果。</li><li>完成角色動畫實作。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-06.html">單元 6 · 變數與運算</a>。</li><li>下一篇：<a href="unit-08.html">單元 8 · 動畫與故事專案</a>。</li><li><a href="../glossary.html">術語表</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-08.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 8 · 動畫與故事專案</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

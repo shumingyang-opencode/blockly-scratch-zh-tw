@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 18 · 跨工具整合 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="把視覺化程式與實體裝置串起來：從螢幕積木到真的機器人。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 18 · 跨工具整合</h1>
+  <p class="subtitle">MakeCode + Micro:bit + Scratch 教學串聯</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>18.1 從螢幕到世界</h2>
+<p>積木程式的終極舞台是<strong>真實世界</strong>：MakeCode 控制 Micro:bit 的感測器、LED 與馬達，讓學生看到「程式真的能控制東西」。</p>
+<div class="pipe"><span class="step">Scratch（螢幕）</span><span class="arr">→</span><span class="step">MakeCode（積木）</span><span class="arr">→</span><span class="step">Micro:bit（真實硬體）</span></div>
+<div class="callout"><strong>STEAM 連結：</strong>這正是「STEAM 的 E（工程）」——程式 + 硬體 = 作品。可與 STEAM × Micro:bit 站互補。</div>
+
+<h2>18.2 MakeCode 感測專案</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>傾斜偵測（水平儀）：
+forever
+  let x = input.acceleration(Dimension.X)
+  if x &gt; 300 then
+    show icon（右傾）
+  else if x &lt; -300 then
+    show icon（左傾）
+  else
+    show icon（水平）
+
+光線警示：
+forever
+  if input.lightLevel() &lt; 40 then
+    show string "太暗了"
+    play tone
+</pre></div>
+
+<h2>18.3 概念遷移表（Scratch → MakeCode）</h2>
+<table>
+<tr><th>Scratch</th><th>MakeCode（Micro:bit）</th></tr>
+<tr><td>當 ⚑ 被點擊</td><td>on start</td></tr>
+<tr><td>當 [鍵] 按下</td><td>on button A pressed</td></tr>
+<tr><td>移動 10 步</td><td>LED 座標變化</td></tr>
+<tr><td>碰到？</td><td>加速度 / 感測器門檻</td></tr>
+<tr><td>廣播</td><td>radio send</td></tr>
+<tr><td>音效</td><td>play tone</td></tr>
+</table>
+
+<h2>18.4 整合課程設計</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>「聲控燈」跨工具課（2 堂）：
+第1堂（Scratch）：做「麥克風偵測→燈泡圖案」的螢幕版
+第2堂（MakeCode）：同樣邏輯搬到 Micro:bit，控制真實 LED
+
+學生體驗：
+  1. 先玩邏輯（螢幕）
+  2. 再見真章（硬體）——「原來程式能開燈！」
+</pre></div>
+<div class="callout info"><strong>教學原則：</strong>先在螢幕上把<strong>邏輯</strong>搞懂，再搬到硬體加<strong>實體感</strong>——一次只加一個新變因。</div>
+
+<h2>18.5 練習</h2>
+<ol>
+<li>用 MakeCode 做一個「光線太暗會叫」的專案。</li>
+<li>設計一堂「先 Scratch 後 MakeCode」的整合課。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>說明積木程式與實體裝置的串聯方式。</li><li>用 MakeCode + Micro:bit 做感測專案。</li><li>規劃 Scratch 與硬體的整合課程。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-17.html">單元 17 · 課堂與專案式學習</a>。</li><li>下一篇：<a href="unit-19.html">單元 19 · 完整案例</a>。</li><li><a href="../blocks.html">積木速查</a></li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-19.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 19 · 完整案例：一個學期課程藍圖</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>
