@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 22 · 運算子優先序與括號自動化 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="Blockly 怎麼自動加括號：運算子優先序的完整機制與實作。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 22 · 運算子優先序與括號自動化</h1>
+  <p class="subtitle">Order 列舉、valueToCode 傳遞規則、最小括號原則</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>22.1 為什麼需要自動括號</h2>
+<p>積木本身「隱含括號」：下面的積木代表 <code>-(5 + 2)</code> 而不是 <code>-5 + 2</code>：</p>
+<div class="pipe"><span class="step">負號積木</span><span class="arr">包含</span><span class="step">加法積木(5, 2)</span></div>
+<p>如果每個內嵌積木都包括號，會得到 <code>((5) * (2)) + (3)</code>——正確但難以閱讀。Blockly 用<strong>運算子優先序（precedence）</strong>只在「必要」時加括號。</p>
+<div class="callout"><strong>黃金規則：</strong>當<strong>外層運算子比內層強</strong>時才需要括號。Blockly 靠兩個值判斷：`valueToCode` 傳入的「外層最強優先序」、生成器回傳的「內層最弱優先序」。</div>
+
+<h2>22.2 Order 列舉</h2>
+<p>每個語言生成器都定義自己的 <code>Order</code> 列舉（對應該語言的真實優先序），例如 JavaScript 的 <code>Order</code> 含 <code>ADDITION</code>、<code>MULTIPLICATION</code>、<code>RELATIONAL</code>、<code>LOGICAL_NOT</code>…</p>
+<table>
+<tr><th>Order 值</th><th>意義</th><th>使用時機</th></tr>
+<tr><td><strong>Order.ATOMIC</strong></td><td>最強（原子值）</td><td>想「永遠加括號」時傳給 valueToCode；積木無運算子時回傳</td></tr>
+<tr><td><strong>Order.NONE</strong></td><td>最弱</td><td>想「永遠加括號」時回傳；無運算子作用於內嵌積木時傳入</td></tr>
+<tr><td><strong>其他</strong></td><td>各語言真實優先序</td><td>依你的積木使用了哪種運算子選擇</td></tr>
+</table>
+<div class="callout warn"><strong>重點：</strong>「強」的數值小（如 ATOMIC），「弱」的數值大（如 NONE）。你可以想成「強壯的選手等級低、卻贏過弱的」。</div>
+
+<h2>22.3 valueToCode 的傳入規則</h2>
+<p>呼叫 <code>generator.valueToCode(block, 'NAME', order)</code> 時，傳入的 <code>order</code> 是<strong>你的積木中作用於該內嵌值的最強運算子</strong>——也就是內嵌碼需要「被保護不被拆散」的那個運算子。</p>
+<div class="demo-block"><div class="demo-label">範例</div><pre>// 積木：-(內嵌值) + 2
+// 作用於內嵌值的運算子：負號（UNARY_NEGATION）與加法（ADDITION）
+// 負號最強 → 傳給 valueToCode
+const innerCode = generator.valueToCode(block, 'INNER', Order.UNARY_NEGATION);
+const code = `-${innerCode} + 2`;
+// 本積木內最弱的運算是加法 → 回傳 ADDITION
+return [code, Order.ADDITION];
+</pre></div>
+
+<h2>22.4 回傳優先序規則</h2>
+<p>回傳的 order 是<strong>積木內部最弱的運算子</strong>——也就是最需要被保護的那個。這樣外層積木在包這塊積木時，才知道要不要加括號。</p>
+<div class="demo-block"><div class="demo-label">負號+加法積木</div><pre>// 積木內容：-x + 2（有負號與加法兩個運算子）
+// 加法比負號弱 → 回傳 ADDITION
+return [code, Order.ADDITION];
+
+// 若被「乘法積木」當內嵌：2 * (-x + 2)
+// MULTIPLICATION 比 ADDITION 強 → 自動加括號 → 正確！
+// 若被「負號積木」當內嵌：-(-x + 2)
+// 也是 UNARY_NEGATION 較強 → 括號保護 → 正確
+</pre></div>
+<div class="callout info"><strong>直覺：</strong>回傳「最弱」= 告訴外界「我是這個等級的貨色，想把我拆開請先加括號」。</div>
+
+<h2>22.5 強制括號的兩種方法</h2>
+<ul>
+<li><strong>永遠正確</strong>：所有 <code>valueToCode</code> 都傳 <code>Order.ATOMIC</code>，所有生成器都回傳 <code>Order.NONE</code> → 每個內嵌都被括號包住（可讀性差但絕對正確）。</li>
+<li><strong>最小括號</strong>：正確使用各語言 Order → 只加必要括號（最佳做法）。</li>
+</ul>
+<div class="demo-block"><div class="demo-label">對比</div><pre>最小括號：5 * 2 + 3
+永遠括號：((5) * (2)) + (3)
+// 兩者都 = 13，但前者可讀性高得多
+</pre></div>
+
+<h2>22.6 Worked Example：修正漏括號的生成器</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>問題：下面的生成器回傳 [code] 而非 [code, order]：
+javascriptGenerator.forBlock['negate_plus_two'] = function(block, generator) {
+  const inner = generator.valueToCode(block, 'INNER', Order.ATOMIC);
+  const code = '-' + inner + ' + 2';
+  return code;                    // ✗ 沒回傳 order
+};
+// 當它被乘法積木內嵌 → 生成 "2 * -x + 2"（錯！應是 2 * (-x + 2)）
+
+修正：
+  return [code, Order.ADDITION];  // ✓ 告知外界「我內部最弱是加法」
+
+驗證：
+  乘積木內嵌時 → valueToCode 收到 ADDITION 弱於 MULTIPLICATION
+  → 自動包括號 → "2 * (-x + 2)" ✓
+</pre></div>
+
+<h2>22.7 練習</h2>
+<ol>
+<li>為什麼「外層比內層強」才需要括號？</li>
+<li>寫一個「加法積木」的生成器，並正確回傳 order。</li>
+<li>用 `Order.ATOMIC` 重寫，比較產出與最小括號版的差異。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>解釋 Order 列舉與 ATOMIC/NONE 的用途。</li><li>說明 valueToCode 傳入與回傳優先序的規則。</li><li>預測並修正括號遺漏的程式碼。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-21.html">單元 21 · Blockly 程式碼生成器深入</a>。</li><li>下一篇：<a href="unit-23.html">單元 23 · 自訂目標語言生成器</a>。</li><li><a href="../glossary.html">術語表</a>：Order/優先序。</li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-23.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 23 · 自訂目標語言生成器</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 23 · 自訂目標語言生成器 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="內建 5 種語言之外，把積木輸出成「你要的語言或格式」的方法論。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 23 · 自訂目標語言生成器</h1>
+  <p class="subtitle">CodeGenerator 子類別、JSON codelab、DSL/硬體指令</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>23.1 內建語言生成器</h2>
+<p>Blockly 內建 5 種語言生成器，每個都是「語言通用規則 + 一組積木生成器」：</p>
+<table>
+<tr><th>語言</th><th>import 方式</th><th>適用</th></tr>
+<tr><td>JavaScript ES5</td><td>blockly/javascript</td><td>瀏覽器/Node.js</td></tr>
+<tr><td>Python 3</td><td>blockly/python</td><td>教學、資料、後端</td></tr>
+<tr><td>Lua 5.1</td><td>blockly/lua</td><td>遊戲引擎、嵌入式</td></tr>
+<tr><td>Dart 2</td><td>blockly/dart</td><td>Flutter/App</td></tr>
+<tr><td>PHP 7</td><td>blockly/php</td><td>網頁後端</td></tr>
+</table>
+<div class="callout"><strong>核心：</strong>每個積木要支援哪種語言，就要為那塊積木寫一個 <code>forBlock['type']</code> 生成器。內建積木已備齊，自訂積木需自己補。</div>
+
+<h2>23.2 為什麼要自訂生成器</h2>
+<ul>
+<li><strong>目標語言不在內建 5 種</strong>：如 C、Go、Rust、Arduino。</li>
+<li><strong>目標不是程式語言</strong>：輸出 JSON 設定、SQL、DSL、甚至硬體指令序列。</li>
+<li><strong>產出格式客製</strong>：縮排 2/4 格、無分號、特定命名。</li>
+</ul>
+<div class="demo-block"><div class="demo-label">實際案例</div><pre>Blockly 用在：
+  MakeCode → 輸出 JavaScript + MicroPython
+  App Inventor → 輸出 .aia（內部 JSON）
+  自製 IoT 工具 → 輸出 JSON 設定檔給韌體
+  機器人教學 → 輸出「前進/右轉/角度」指令序列
+</pre></div>
+
+<h2>23.3 寫一個自訂 CodeGenerator（JSON 為例）</h2>
+<p>官方 codelab 以「JSON 語言生成器」示範：積木拼成巢狀 JSON 物件。</p>
+<div class="demo-block"><div class="demo-label">CodeGenerator 子類別</div><pre>import {CodeGenerator} from 'blockly';
+import {javascriptGenerator} from 'blockly/javascript';
+
+class JsonGenerator extends CodeGenerator {
+  constructor() {
+    super('JSON');                 // 名稱
+    this.isInitialized = false;    // 後續 init() 中初始化
+  }
+  // 可覆寫語言通用規則，例如縮排
+  // this.INDENT = '  ';
+}
+
+const jsonGenerator = new JsonGenerator();
+// 註冊積木生成器
+jsonGenerator.forBlock['json_setting'] = function(block, generator) {
+  const key = block.getFieldValue('KEY');
+  const value = generator.valueToCode(block, 'VALUE', 0);
+  return '\n  "' + key + '": ' + value + ',';
+};
+</pre></div>
+<div class="callout info"><strong>重點：</strong>自訂生成器也是「CodeGenerator 子類別 + forBlock 生成器」。語言規則（縮排/字串）寫在類別裡，積木轉換寫在 forBlock 裡——與內建生成器完全同一套模型。</div>
+
+<h2>23.4 dropdown 值轉換：語言中立 → 目標語法</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>// 積木的 dropdown 存的是語言中立值
+options: [['不等於', 'NOT_EQUAL'], ['大於', 'GREATER']]
+
+// 目標語言是 JavaScript → 對照表
+const OP = {NOT_EQUAL: '!==', GREATER: '&gt;'};
+const op = OP[block.getFieldValue('OPERATOR')];   // '!=='
+
+// 目標語言是 C → 另一張表
+const OP_C = {NOT_EQUAL: '!=', GREATER: '&gt;'};
+const opC = OP_C[block.getFieldValue('OPERATOR')]; // '!='
+
+// 同一塊積木，不同生成器 → 不同語言！
+</pre></div>
+<div class="callout warn"><strong>設計原則：</strong>欄位值要「語言中立」，翻譯交給生成器。這樣同一塊積木才能自由輸出多種語言。</div>
+
+<h2>23.5 Worked Example：把積木輸出成 JSON 設定</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>目標：使用者拼「溫度警報」積木 → 輸出韌體能讀的 JSON
+
+積木：alarm_when (SENSOR dropdown) (THRESHOLD number) (ACTION dropdown)
+
+JsonGenerator.forBlock['alarm_when'] = function(block, generator) {
+  const sensor = block.getFieldValue('SENSOR');      // 'temperature'
+  const action = block.getFieldValue('ACTION');      // 'sound'
+  const threshold = generator.valueToCode(block, 'THRESHOLD', 0);
+  return '{\n  "sensor": "' + sensor + '",\n  "threshold": ' +
+         threshold + ',\n  "action": "' + action + '"\n}';
+};
+
+// 輸出：
+// {
+//   "sensor": "temperature",
+//   "threshold": 40,
+//   "action": "sound"
+// }
+// 韌體拿到 JSON → 直接套用設定！這就是「積木 → 你要的格式」。
+</pre></div>
+
+<h2>23.6 練習</h2>
+<ol>
+<li>說出「語言生成器」與「積木生成器」的分工。</li>
+<li>為你的積木寫一個輸出「C 語言」的生成器片段。</li>
+<li>設計一個輸出「JSON 設定檔」的積木並試拼。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>說出 Blockly 內建 5 種語言生成器。</li><li>為「目標語言」寫一個自訂 CodeGenerator 子類別。</li><li>把積木輸出成非程式語言格式（JSON/DSL/硬體指令）。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-22.html">單元 22 · 運算子優先序</a>。</li><li>下一篇：<a href="unit-24.html">單元 24 · Blockly 應用整合與序列化</a>。</li><li><a href="../glossary.html">術語表</a>：CodeGenerator。</li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-24.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 24 · Blockly 應用整合與序列化</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

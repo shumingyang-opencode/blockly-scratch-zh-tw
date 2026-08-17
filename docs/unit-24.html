@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 24 · Blockly 應用整合與序列化 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="把積木編輯器整合進真實應用：工具箱、序列化、事件與執行。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 24 · Blockly 應用整合與序列化</h1>
+  <p class="subtitle">toolbox 深度、Blockly.inject、JSON/XML、執行生成碼</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>24.1 把 Blockly 嵌進你的頁面</h2>
+<div class="pipe"><span class="step">載入 Blockly</span><span class="arr">→</span><span class="step">定義 toolbox</span><span class="arr">→</span><span class="step">Blockly.inject</span><span class="arr">→</span><span class="step">生成/執行</span></div>
+<div class="demo-block"><div class="demo-label">最小整合</div><pre>&lt;div id="blocklyDiv" style="height: 480px; width: 600px;"&gt;&lt;/div&gt;
+&lt;script&gt;
+  const toolbox = {kind: 'categoryToolbox', contents: [
+    {kind: 'category', name: '控制', colour: '120', contents: [
+      {kind: 'block', type: 'controls_if'},
+      {kind: 'block', type: 'controls_repeat_ext'}
+    ]},
+    {kind: 'category', name: '變數', colour: '330',
+     custom: 'VARIABLE'}
+  ]};
+
+  const workspace = Blockly.inject('blocklyDiv', {
+    toolbox: toolbox,
+    grid: {spacing: 20, length: 3},
+    zoom: {controls: true, wheel: true},
+    trashcan: true
+  });
+&lt;/script&gt;
+</pre></div>
+<div class="callout"><strong>inject 的回傳值就是 workspace</strong>：之後生成程式碼、序列化、監聽事件都靠它。</div>
+
+<h2>24.2 toolbox JSON 深度</h2>
+<table>
+<tr><th>元件</th><th>kind</th><th>用途</th></tr>
+<tr><td>工具箱根</td><td>categoryToolbox</td><td>含多個分類</td></tr>
+<tr><td>分類</td><td>category</td><td>一組積木（可設 name/colour）</td></tr>
+<tr><td>積木</td><td>block</td><td>單一積木（type + fields 預設值）</td></tr>
+<tr><td>分隔線</td><td>sep</td><td>分類間分隔</td></tr>
+<tr><td>動態分類</td><td>custom: 'VARIABLE'</td><td>變數/函式等動態清單</td></tr>
+</table>
+<div class="demo-block"><div class="demo-label">帶預設值的積木</div><pre>{kind: 'block', type: 'alarm_when',
+ fields: {SENSOR: 'temperature', THRESHOLD: 40}}
+// 拖出來就是「temperature > 40」的預設狀態
+</pre></div>
+
+<h2>24.3 序列化：儲存與載入</h2>
+<div class="demo-block"><div class="demo-label">JSON（新 API，推薦）</div><pre>import * as Blockly from 'blockly/core';
+import {save, load} from 'blockly/serialization/workspaces';
+
+// 儲存
+const state = save(workspace);
+localStorage.setItem('myWorkspace', JSON.stringify(state));
+
+// 載入
+const loaded = JSON.parse(localStorage.getItem('myWorkspace'));
+load(loaded, workspace);
+</pre></div>
+<div class="demo-block"><div class="demo-label">XML（傳統，仍相容）</div><pre>import {workspaceToDom, domToWorkspace} from 'blockly/xml';
+
+const xml = Blockly.Xml.workspaceToDom(workspace);
+const text = Blockly.Xml.domToText(xml);   // 儲存成字串
+// 載入：
+const dom = Blockly.Xml.textToDom(text);
+Blockly.Xml.domToWorkspace(dom, workspace);
+</pre></div>
+<div class="callout warn"><strong>選哪個：</strong>新專案建議用 JSON（`blockly/serialization/workspaces`）——結構化、未來支援佳；XML 為相容舊版而存在。</div>
+
+<h2>24.4 生成並執行程式碼</h2>
+<div class="demo-block"><div class="demo-label">執行策略</div><pre>// 1. 生成
+const code = Blockly.JavaScript.workspaceToCode(workspace);
+
+// 2. 執行（瀏覽器，注意安全）
+try { new Function(code)(); }
+catch (e) { console.error(e); }
+
+// 3. 或輸出給使用者複製
+document.getElementById('output').textContent = code;
+
+// 4. 或送後端/硬體（POST code 字串）
+fetch('/api/run', {method: 'POST', body: code});
+</pre></div>
+<div class="callout warn"><strong>安全提醒：</strong>`eval`/`new Function` 執行使用者程式有 XSS/RCE 風險。線上工具建議只「顯示程式碼」，執行移轉到後端沙箱或目標硬體。</div>
+
+<h2>24.5 事件監聽與變更偵測</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>// 工作區任何變更都觸發
+workspace.addChangeListener((e) =&gt; {
+  if (e.isUiEvent) return;          // 忽略純 UI 事件
+  const code = Blockly.JavaScript.workspaceToCode(workspace);
+  updatePreview(code);              // 即時預覽
+  autosave(workspace);              // 自動存檔
+});
+</pre></div>
+<div class="callout info"><strong>即時預覽：</strong>「拼積木 → 右邊即時顯示程式碼」就是靠 change listener。這是 Blockly 應用最常見的 UX。</div>
+
+<h2>24.6 Worked Example：完整迷你應用</h2>
+<div class="demo-block"><div class="demo-label">範例</div><pre>「積木 → JSON 設定」工具（完整流程）：
+1. 載入 blockly + 自訂 JsonGenerator（單元 23）
+2. inject：toolbox 含 alarm_when 等自訂積木
+3. change listener：每次變更 → jsonGenerator.workspaceToCode()
+4. 顯示在右側 pre#output
+5. 「儲存」→ JSON 序列化存 localStorage
+6. 「下載」→ 把 JSON 設定存成 .json 檔
+
+完成標竿：
+  使用者拼「temperature > 40 → sound」→
+  即時看到 JSON → 下載 → 韌體直接套用。
+</pre></div>
+
+<h2>24.7 練習</h2>
+<ol>
+<li>用 categoryToolbox 建立含 3 個分類的工具箱。</li>
+<li>實作「儲存/載入」按鈕（JSON 序列化）。</li>
+<li>說明 `eval` 執行程式碼的風險與替代方案。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>用 categoryToolbox JSON 定義完整工具箱。</li><li>用 Blockly.inject 設定工作區並注入。</li><li>用 JSON/XML 序列化儲存與載入工作區。</li><li>生成程式碼並在應用中執行。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-23.html">單元 23 · 自訂目標語言生成器</a>。</li><li><a href="../learning-path.html">學習路線</a>：複習全站 L6。</li><li><a href="../glossary.html">術語表</a>：inject/serialization/toolbox。</li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

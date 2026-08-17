@@ -62,6 +62,25 @@
 <tr><td><strong>Python</strong></td><td>Python</td><td>MakeCode/MicroPython 支援語言</td><td>單元 14</td></tr>
 <tr><td><strong>積木對照碼</strong></td><td>Block → Code</td><td>積木轉換成的文字程式</td><td>單元 14</td></tr>
 </table>
+<h2>Blockly 二次開發（L6）</h2>
+<table>
+<tr><th>名稱</th><th>英文/縮寫</th><th>說明</th><th>單元</th></tr>
+<tr><td><strong>語言生成器</strong></td><td>Language Generator</td><td>處理語言通用規則（縮排/引號/註解）的類別</td><td>單元 21</td></tr>
+<tr><td><strong>積木生成器</strong></td><td>Block-code Generator</td><td>單一積木 → 程式碼字串的函式（forBlock）</td><td>單元 21</td></tr>
+<tr><td><strong>生成工作區碼</strong></td><td>workspaceToCode</td><td>把整個工作區的積木生成成程式碼</td><td>單元 21</td></tr>
+<tr><td><strong>生成單積木碼</strong></td><td>blockToCode</td><td>只生成一塊積木（含內嵌）的程式碼</td><td>單元 21</td></tr>
+<tr><td><strong>值積木</strong></td><td>Value Block</td><td>有 output、對應表達式，回傳 [code, order]</td><td>單元 21</td></tr>
+<tr><td><strong>語句積木</strong></td><td>Statement Block</td><td>無 output、對應陳述句，回傳 code 字串</td><td>單元 21</td></tr>
+<tr><td><strong>取值碼</strong></td><td>valueToCode</td><td>取得 value 輸入內嵌積木的程式碼（帶優先序）</td><td>單元 21</td></tr>
+<tr><td><strong>取語句碼</strong></td><td>statementToCode</td><td>取得 statement 輸入內嵌積木的程式碼（含縮排）</td><td>單元 21</td></tr>
+<tr><td><strong>運算子優先序</strong></td><td>Order / Precedence</td><td>判斷何時需括號的優先序機制</td><td>單元 22</td></tr>
+<tr><td><strong>原子優先序</strong></td><td>Order.ATOMIC</td><td>最強優先序；想永遠加括號時使用</td><td>單元 22</td></tr>
+<tr><td><strong>最弱優先序</strong></td><td>Order.NONE</td><td>最弱；無運算子或想強制括號時使用</td><td>單元 22</td></tr>
+<tr><td><strong>自訂語言生成器</strong></td><td>Custom CodeGenerator</td><td>繼承 CodeGenerator 產生內建 5 種之外的語言/格式</td><td>單元 23</td></tr>
+<tr><td><strong>工具箱</strong></td><td>Toolbox</td><td>定義可用積木與分類（categoryToolbox）</td><td>單元 24</td></tr>
+<tr><td><strong>注入</strong></td><td>Blockly.inject</td><td>把編輯器嵌入 DOM 元素並回傳 workspace</td><td>單元 24</td></tr>
+<tr><td><strong>序列化</strong></td><td>Serialization</td><td>儲存/載入工作區（JSON/XML）</td><td>單元 24</td></tr>
+</table>
 </div>
 <footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
   <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>

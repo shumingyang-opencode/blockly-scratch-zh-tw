@@ -294,6 +294,8 @@ details.en-toggle > div { padding: 0 0.9rem 0.9rem; }
 .lv-amber { --lv: #fbbf24; }
 .lv-fuchsia { --lv: #e879f9; }
 .lv-violet { --lv: #a78bfa; }
+.lv-orange { --lv: #fb923c; }
+.lv-red { --lv: #f87171; }
 .level-head { display: flex; align-items: baseline; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .level-badge { color: var(--lv, var(--cyan)); border: 1px solid var(--lv, var(--cyan)); background: rgba(255,255,255,0.03); border-radius: 6px; font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; padding: 0.1rem 0.6rem; letter-spacing: 0.06em; white-space: nowrap; }
 .level-title { font-family: var(--font-display); font-size: 1.1rem; color: #f0f2ff; font-weight: 600; }

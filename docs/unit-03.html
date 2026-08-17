@@ -47,7 +47,21 @@
   + 執行器（可選：直接跑起來）
 </pre></div>
 
-<h2>3.4 Worked Example：Blockly Games 探索</h2>
+<h2>3.4 積木 → 程式碼的管線總覽</h2>
+<p>Blockly 最核心的能力，是「<strong>積木不能直接跑，必須先轉成文字程式碼</strong>」。這條管線是二次開發的地基：</p>
+<div class="pipe"><span class="step">拼積木</span><span class="arr">→</span><span class="step">生成器掃描</span><span class="arr">→</span><span class="step">每塊積木調用 forBlock 生成器</span><span class="arr">→</span><span class="step">組合成完整 code 字串</span></div>
+<p>Blockly 內建<strong> 5 種語言生成器</strong>：</p>
+<table>
+<tr><th>語言</th><th>常見用途</th><th>誰在用</th></tr>
+<tr><td><strong>JavaScript</strong></td><td>瀏覽器/Node.js 執行</td><td>MakeCode 的 JS 檢視</td></tr>
+<tr><td><strong>Python</strong></td><td>教學/資料/後端</td><td>MakeCode Python 檢視</td></tr>
+<tr><td><strong>Lua</strong></td><td>遊戲引擎/嵌入式</td><td>特定遊戲教育工具</td></tr>
+<tr><td><strong>Dart</strong></td><td>Flutter App</td><td>App 開發工具</td></tr>
+<tr><td><strong>PHP</strong></td><td>網頁後端</td><td>Web 教育平台</td></tr>
+</table>
+<div class="callout"><strong>關鍵：</strong>「語言生成器」管語言通用規則（縮排/字串引號/註解），「積木生成器（forBlock）」管單一積木怎麼轉。你想要的語言若不在內建 5 種，可以<strong>自己寫一個生成器</strong>——這正是 L6 單元 21–24 的主題。</div>
+
+<h2>3.5 Worked Example：Blockly Games 探索</h2>
 <div class="demo-block"><div class="demo-label">範例</div><pre>打開 blockly.games 迷宮關卡：
 1. 用「前進/右轉/左轉」積木控制角色走出迷宮
 2. 觀察：積木少 → 程式短；這是「序列」概念
@@ -57,6 +71,7 @@
 任務：走完 3 關，說出你用了哪些積木與概念。
 </pre></div>
 <p>動手：玩 Blockly Games 迷宮至少 3 關，並紀錄你用了哪些積木。</p>
+<p><strong>進階路線：</strong>若你是開發者，本單元後可直接跳 <a href="unit-21.html">單元 21 · Blockly 程式碼生成器深入</a>，從「使用者」轉為「工具製作者」。</p>
 
   <div class="outcome">
     <strong>看完這單元你應該能說出：</strong>

@@ -27,60 +27,116 @@
 <h2>15.1 Blockly 開發者的視角</h2>
 <p>對開發者而言，Blockly 是<strong>一個 JavaScript 程式庫</strong>，你把它嵌進自己的網頁，就能得到一個積木編輯器。</p>
 <div class="pipe"><span class="step">引入 Blockly</span><span class="arr">→</span><span class="step">定義積木工具箱</span><span class="arr">→</span><span class="step">設定生成器</span><span class="arr">→</span><span class="step">執行/匯出</span></div>
+<p>這個單元教「<strong>動手做一個自訂積木</strong>」；若要深入生成器、優先序與自訂語言，請接著看 <a href="unit-21.html">單元 21–24</a>。</p>
 
 <h2>15.2 核心組成</h2>
 <table>
 <tr><th>元件</th><th>功能</th></tr>
 <tr><td>Toolbox（工具箱）</td><td>定義有哪些積木、分類</td></tr>
 <tr><td>Workspace（工作區）</td><td>使用者拖放積木的畫布</td></tr>
-<tr><td>Block 定義</td><td>積木的外觀與參數</td></tr>
-<tr><td>Generator（生成器）</td><td>積木 → 目標語言程式碼</td></tr>
-<tr><td>Serialization</td><td>儲存/載入積木（XML/JSON）</td></tr>
+<tr><td>Block 定義</td><td>積木的外觀與參數（欄位/輸入/連接）</td></tr>
+<tr><td>Generator（生成器）</td><td>積木 → 目標語言程式碼（forBlock）</td></tr>
+<tr><td>Serialization</td><td>儲存/載入積木（JSON/XML）</td></tr>
 </table>
 
-<h2>15.3 自訂一個積木</h2>
-<div class="demo-block"><div class="demo-label">範例（簡化）</div><pre>// 定義積木「打招呼」
-Blockly.Blocks['say_hi'] = {
+<h2>15.3 積木的三種基本零件</h2>
+<p>一塊自訂積木由三種零件組成，理解它們才能設計出「好看又正確」的積木：</p>
+<table>
+<tr><th>零件</th><th>作用</th><th>範例</th></tr>
+<tr><td><strong>欄位（Field）</strong></td><td>使用者可編輯的輸入</td><td>文字框、下拉選單、數字、勾選框</td></tr>
+<tr><td><strong>輸入（Input）</strong></td><td>可嵌入其他積木的「插槽」</td><td>值輸入（input_value）、語句輸入（input_statement）、虛擬輸入（input_dummy）</td></tr>
+<tr><td><strong>連接（Connection）</strong></td><td>積木與其他積木相接的接頭</td><td>output（值）、previous/next（語句堆疊）</td></tr>
+</table>
+<div class="callout"><strong>欄位 vs 輸入：</strong>欄位是「直接輸入值」（文字/數字），輸入是「嵌入另一塊積木」（一個表達式或一段指令）。設計積木時先想清楚：這個位置該放欄位還是輸入。</div>
+
+<h2>15.4 自訂積木的兩種定義法</h2>
+<div class="demo-block"><div class="demo-label">方法一：JSON（推薦，簡潔）</div><pre>Blockly.common.defineBlocksWithJsonArray([{
+  type: 'say_hi',
+  message0: '%1',              // %1 對應 args0 第 1 項
+  args0: [
+    {type: 'field_input', name: 'NAME', text: '世界'}
+  ],
+  previousStatement: null,
+  nextStatement: null,
+  colour: 160,
+  tooltip: '說一句打招呼的話',
+  helpUrl: ''
+}]);
+</pre></div>
+<div class="demo-block"><div class="demo-label">方法二：JavaScript（較彈性）</div><pre>Blockly.Blocks['say_hi'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField('打招呼');
+        .appendField('打招呼')
+        .appendField(new Blockly.FieldTextInput('世界'), 'NAME');
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setColour(160);
+    this.setTooltip('說一句打招呼的話');
   }
 };
-
-// 生成 JavaScript
-Blockly.JavaScript['say_hi'] = function(block) {
-  return 'console.log("你好！");
-';
-};
 </pre></div>
-<div class="callout"><strong>重點：</strong>每個積木要<strong>定義外觀</strong>（init）也要<strong>定義程式碼輸出</strong>（generator）——缺一不可。</div>
+<div class="callout info"><strong>怎麼選：</strong>新積木用 JSON（`defineBlocksWithJsonArray`）最省事；需要自訂行為（如動態改變欄位）時再用 JS。</div>
 
-<h2>15.4 嵌入網頁的最小流程</h2>
+<h2>15.5 寫出程式碼：forBlock 生成器</h2>
+<p>定義積木的外觀之後，要告訴 Blockly「這塊積木產生什麼程式碼」——用 <code>forBlock</code>：</p>
+<div class="demo-block"><div class="demo-label">生成器（修正版）</div><pre>import {javascriptGenerator} from 'blockly/javascript';
+
+javascriptGenerator.forBlock['say_hi'] = function(block, generator) {
+  // 讀取 NAME 欄位的值
+  const name = block.getFieldValue('NAME');
+  // 組出程式碼字串（注意跳脫引號與換行）
+  const code = 'console.log("你好，' + name + '！");\n';
+  return code;   // statement 積木直接回傳字串
+};
+
+// 使用：Blockly.JavaScript.workspaceToCode(workspace)
+// 產出：console.log("你好，世界！");
+</pre></div>
+<div class="callout warn"><strong>常見 bug（重要）：</strong>生成器回傳的字串若想換行，要寫 `'\n'`（反斜線 n），不是真的換行或 `
+` 遺漏。另外 value 積木要回傳 <code>[code, order]</code>，語句積木回傳純字串——詳見 <a href="unit-21.html">單元 21</a>。</div>
+
+<h2>15.6 嵌入網頁的最小流程</h2>
 <ol>
-<li>載入 blockly 的 script。</li>
+<li>載入 blockly 的 script（含你要的語言生成器）。</li>
 <li>建立一個 div 當工作區。</li>
-<li>設定 toolbox JSON（積木清單）。</li>
-<li>用 Blockly.inject(div, config) 啟動。</li>
-<li>呼叫 Blockly.JavaScript.workspaceToCode() 拿程式碼。</li>
+<li>設定 toolbox JSON（積木清單與分類）。</li>
+<li>用 <code>Blockly.inject(div, config)</code> 啟動，拿到 workspace。</li>
+<li>呼叫 <code>Blockly.JavaScript.workspaceToCode(workspace)</code> 拿程式碼。</li>
 </ol>
+<div class="demo-block"><div class="demo-label">最小頁面</div><pre>&lt;div id="blocklyDiv"&gt;&lt;/div&gt;
+&lt;script&gt;
+  const ws = Blockly.inject('blocklyDiv', {
+    toolbox: {kind: 'categoryToolbox', contents: [
+      {kind: 'category', name: '自訂', colour: '160', contents: [
+        {kind: 'block', type: 'say_hi',
+         fields: {NAME: 'OpenCode'}}   // 拖出即預填
+      ]}
+    ]}
+  });
+  // 生成
+  const code = Blockly.JavaScript.workspaceToCode(ws);
+  console.log(code);   // console.log("你好，OpenCode！");
+&lt;/script&gt;
+</pre></div>
 <div class="callout warn"><strong>給自學者的路：</strong>先讀官方 playground 範例 → 改 toolbox → 加一個自訂積木 → 跑通生成器。小步前進。</div>
 
-<h2>15.5 Worked Example：你的第一個 Blockly 頁面</h2>
+<h2>15.7 Worked Example：你的第一個 Blockly 頁面</h2>
 <div class="demo-block"><div class="demo-label">範例</div><pre>目標：一個有「前進/後退/左轉」的迷你控制工具
 1. toolbox 定義三個積木（各帶角度參數）
 2. 生成器輸出到一組指令字串
 3. 按下「執行」→ 依序播放指令（可串 Blockly Games 迷宮概念）
 
+積木：move_forward（角度）→ 生成 "FORWARD 90"
+      move_backward（角度）→ 生成 "BACKWARD 90"
+      turn_left（角度）→ 生成 "TURN_LEFT 90"
+
 完成標竿：使用者能拼出「前進→右轉→前進」走出迷宮。
 </pre></div>
-<p>動手：找一個 Blockly 官方範例，改 toolbox 加入「打招呼」積木，並讓它輸出 JS。</p>
+<p>動手：找一個 Blockly 官方範例，改 toolbox 加入「打招呼」積木，並讓它輸出 JS（記得用修正後的 forBlock 寫法）。</p>
 
   <div class="outcome">
     <strong>看完這單元你應該能說出：</strong>
-    <ul><li>說明 Blockly 作為程式庫的組成。</li><li>定義一個簡單的自訂積木。</li><li>描述把 Blockly 嵌入網站的步驟。</li></ul>
+    <ul><li>說明 Blockly 作為程式庫的組成。</li><li>分辨欄位/輸入/連接並定義一個自訂積木。</li><li>用 JSON 與 JS 兩種方法定義積木並寫出 forBlock 生成器。</li></ul>
   </div>
 
   <h2>延伸閱讀</h2>

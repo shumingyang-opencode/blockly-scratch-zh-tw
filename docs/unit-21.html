@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>單元 21 · Blockly 程式碼生成器深入 · Blockly × Scratch 繁中教學站</title>
+<meta name="description" content="把積木變成程式碼的引擎：完整 custom_compare 與 custom_if 生成器範例。">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>單元 21 · Blockly 程式碼生成器深入</h1>
+  <p class="subtitle">workspaceToCode 管線、forBlock、value/statement 生成器</p>
+</header>
+<nav class="topnav">  <a href="../index.html">首頁</a>
+  <a href="../map.html">概念地圖</a>
+  <a href="../learning-path.html">學習路線</a>
+  <a href="../docs/index.html">單元教學</a>
+  <a href="../glossary.html">術語表</a>
+  <a href="../blocks.html">積木速查</a>
+  <a href="../projects.html">專案速查</a>
+  <a href="../about.html">關於</a>
+  </nav><div class="back-link"><a href="index.html">← 單元教學</a></div>
+<div class="guide">
+<h2>21.1 生成程式碼的完整管線</h2>
+<p>Blockly 不能「直接執行」積木——它把積木<strong>轉成文字程式碼字串</strong>，再由你的應用決定如何執行（eval、送後端、燒進硬體）。整條管線：</p>
+<div class="pipe"><span class="step">workspace 上的積木</span><span class="arr">→</span><span class="step">blockToCode</span><span class="arr">→</span><span class="step">block-code generator</span><span class="arr">→</span><span class="step">code 字串</span><span class="arr">→</span><span class="step">執行/輸出</span></div>
+<div class="demo-block"><div class="demo-label">入口 API</div><pre>// 一次生成整個工作區的程式碼
+const code = Blockly.JavaScript.workspaceToCode(workspace);
+
+// 只生成某一塊積木（與其內嵌積木）
+const block = workspace.getBlockById('abc123');
+const code2 = Blockly.JavaScript.blockToCode(block);
+</pre></div>
+<div class="callout"><strong>關鍵架構：</strong>「語言生成器（language generator）」管<strong>語言通用規則</strong>（縮排、字串引號、註解）；「積木生成器（block-code generator）」管<strong>單一積木</strong>。Blockly 內建 5 種語言生成器：<strong>JavaScript、Python、Lua、Dart、PHP</strong>。</div>
+
+<h2>21.2 兩種積木、兩種回傳格式</h2>
+<table>
+<tr><th>積木類型</th><th>有無 output 連接</th><th>對應語言概念</th><th>生成器回傳</th></tr>
+<tr><td><strong>Value block</strong></td><td>有（回傳值）</td><td>表達式（expression）</td><td><strong>[code, order]</strong> 陣列</td></tr>
+<tr><td><strong>Statement block</strong></td><td>無（執行指令）</td><td>陳述句（statement）</td><td><strong>code 字串</strong></td></tr>
+</table>
+<div class="callout warn"><strong>最常見的錯：</strong>value block 生成器若只回傳字串、不回傳 `[code, order]`，Blockly 無法幫你自動加括號（見單元 22），產出的程式碼可能在算術上錯誤。</div>
+
+<h2>21.3 生成器四步驟</h2>
+<ol>
+<li><strong>import 語言生成器</strong>：`import {javascriptGenerator} from 'blockly/javascript'`。</li>
+<li><strong>讀取欄位值</strong>：`block.getFieldValue('OPERATOR')`，並轉成程式碼用值。</li>
+<li><strong>取得內嵌積木的程式碼</strong>：value 輸入用 <code>generator.valueToCode(block, 'NAME', order)</code>；statement 輸入用 <code>generator.statementToCode(block, 'NAME')</code>。</li>
+<li><strong>組字串並回傳</strong>：value block 回傳 <code>[code, order]</code>；statement block 回傳 <code>code</code>。</li>
+</ol>
+
+<h2>21.4 Worked Example：custom_compare（value block）</h2>
+<div class="demo-block"><div class="demo-label">完整範例</div><pre>import {javascriptGenerator, Order} from 'blockly/javascript';
+
+// 定義積木：LEFT (value) OPERATOR (dropdown) RIGHT (number)
+Blockly.common.defineBlocksWithJsonArray([{
+  type: 'custom_compare',
+  message0: '%1 %2 %3',
+  args0: [
+    {type: 'input_value', name: 'LEFT', check: 'Number'},
+    {type: 'field_dropdown', name: 'OPERATOR',
+     options: [['=', 'EQUALS'], ['&lt;', 'LESS'], ['&gt;', 'GREATER']]},
+    {type: 'input_value', name: 'RIGHT', check: 'Number'}
+  ],
+  output: 'Boolean',
+  colour: 210
+}]);
+
+// 生成器：把 dropdown 的語言中立值轉成 JS 運算子
+javascriptGenerator.forBlock['custom_compare'] = function(block, generator) {
+  const OPERATORS = {EQUALS: '==', LESS: '&lt;', GREATER: '&gt;'};
+  const operator = OPERATORS[block.getFieldValue('OPERATOR')];
+  const order = operator === '==' ? Order.EQUALITY : Order.RELATIONAL;
+  const left = generator.valueToCode(block, 'LEFT', order);
+  const right = generator.valueToCode(block, 'RIGHT', order);
+  const code = left + ' ' + operator + ' ' + right;
+  return [code, order];   // ← value block 必須回傳 [code, order]
+};
+</pre></div>
+<div class="callout"><strong>讀懂它：</strong>dropdown 回傳的是語言中立的字串（`EQUALS`），生成器負責「翻譯」成目標語言的真實運算子（`==`）。這是「積木 → 你要的語言」的核心動作。</div>
+
+<h2>21.5 Worked Example：custom_if（statement block）</h2>
+<div class="demo-block"><div class="demo-label">完整範例</div><pre>import {javascriptGenerator, Order} from 'blockly/javascript';
+
+Blockly.common.defineBlocksWithJsonArray([{
+  type: 'custom_if',
+  message0: 'if %1 (negate: %2) then %3',
+  args0: [
+    {type: 'input_value', name: 'CONDITION', check: 'Boolean'},
+    {type: 'field_checkbox', name: 'NOT', checked: false},
+    {type: 'input_statement', name: 'THEN'}
+  ],
+  previousStatement: null,
+  nextStatement: null,
+  colour: 120
+}]);
+
+javascriptGenerator.forBlock['custom_if'] = function(block, generator) {
+  const negate = block.getFieldValue('NOT') === 'TRUE' ? '!' : '';
+  const order = negate ? Order.LOGICAL_NOT : Order.NONE;
+  const condition = generator.valueToCode(block, 'CONDITION', order) || 'false';
+  const statements = generator.statementToCode(block, 'THEN');
+  const code = 'if (' + negate + condition + ') {\n' + statements + '}\n';
+  return code;   // ← statement block 只回傳字串
+};
+</pre></div>
+
+<h2>21.6 statementToCode 的縮排</h2>
+<p><code>generator.statementToCode(block, 'THEN')</code> 不只呼叫內嵌積木的生成器，還會<strong>自動縮排</strong>每一行、並串起「next」連接的後續積木——你不需要自己處理縮排。</p>
+<div class="demo-block"><div class="demo-label">產出</div><pre>// 使用者拼：custom_if → (custom_compare → 內嵌 show_number)
+if (x &lt; 10) {
+  console.log(x);
+}
+</pre></div>
+<div class="callout info"><strong>小結：</strong>生成器 = 「讀欄位 + 取內嵌 + 組字串 + 回傳（含 order）」。學會這四步，你就掌握了 Blockly 二次開發的核心。</div>
+
+<h2>21.7 練習</h2>
+<ol>
+<li>解釋 `workspaceToCode` 與 `blockToCode` 的差異。</li>
+<li>為 `custom_compare` 寫 Python 生成器（`import {pythonGenerator}`）。</li>
+<li>說出 value block 為何要回傳 `[code, order]`。</li>
+</ol>
+
+  <div class="outcome">
+    <strong>看完這單元你應該能說出：</strong>
+    <ul><li>說明 workspaceToCode 的完整管線。</li><li>分辨 value block 與 statement block 的生成器回傳格式。</li><li>寫出完整 custom_compare 與 custom_if 的 block-code generator。</li></ul>
+  </div>
+
+  <h2>延伸閱讀</h2>
+  <ul>
+<li>上一篇：<a href="unit-20.html">單元 20 · 生態與展望</a>。</li><li>下一篇：<a href="unit-22.html">單元 22 · 運算子優先序與括號自動化</a>。</li><li><a href="../glossary.html">術語表</a>：CodeGenerator/forBlock/valueToCode。</li>
+  </ul>
+
+<div class="next-prev">
+    <a href="index.html"><div class="np-label">← 上一層</div><div class="np-name">單元教學目錄</div></a>
+    <a class="np-next" href="unit-22.html"><div class="np-label">下一篇 →</div><div class="np-name">單元 22 · 運算子優先序與括號自動化</div></a>
+</div>
+</div>
+<footer>這是 Blockly × Scratch 繁中教學站 · 由 OpenCode 建置<br>
+  <span class="footer-license">本站教學內容（繁體中文解說）為本站原創，採 CC-BY-4.0；Scratch 名稱與介面引用自 <a href="https://scratch.mit.edu/" rel="noopener">MIT Scratch</a>，Blockly 名稱與文件引用自 <a href="https://developers.google.com/blockly" rel="noopener">Google Blockly</a>與 <a href="https://makecode.microbit.org/" rel="noopener">Microsoft MakeCode</a> 之公開資訊。</span></footer>
+</div></body></html>

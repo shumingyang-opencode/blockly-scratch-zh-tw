@@ -47,7 +47,24 @@
 </ol>
 <div class="callout info"><strong>為什麼有效：</strong>積木當「翻譯機」，學生在不知不覺中學會語法——比直接背語法痛苦少得多。</div>
 
-<h2>14.4 Worked Example：計數器三段對照</h2>
+<h2>14.4 兩類積木對應兩種程式概念</h2>
+<p>要看懂「積木背後的程式碼」，先分辨積木的兩種類型——它們生成的程式碼型態完全不同：</p>
+<table>
+<tr><th>積木類型</th><th>長相</th><th>對應程式概念</th><th>生成結果</th></tr>
+<tr><td><strong>值積木（Value）</strong></td><td>左側有圓形凸出（output）</td><td>表達式 Expression</td><td>值，如 <code>5 + 2</code>、<code>score &gt; 10</code></td></tr>
+<tr><td><strong>語句積木（Statement）</strong></td><td>上下有凹凸（previous/next）</td><td>陳述句 Statement</td><td>指令，如 <code>score += 1;</code>、<code>if (…) {…}</code></td></tr>
+</table>
+<div class="demo-block"><div class="demo-label">範例</div><pre>「+ 積木」（值積木）
+  └─&gt; 生成："a + b"（一個值，可被別處使用）
+
+「如果積木」（語句積木）
+  └─&gt; 生成："if (a &gt; b) {
+  ...
+}"（一段執行的指令）
+</pre></div>
+<div class="callout"><strong>與 L6 的連結：</strong>在 Blockly 二次開發中，值積木的生成器回傳 <code>[code, order]</code>、語句積木回傳字串——這個差別決定了「括號自動化」是否正確（詳見 <a href="unit-21.html">單元 21</a> 與 <a href="unit-22.html">單元 22</a>）。</div>
+
+<h2>14.5 Worked Example：計數器三段對照</h2>
 <div class="demo-block"><div class="demo-label">範例</div><pre>功能：按 A 加一，按 B 重設
 
 積木：
@@ -66,12 +83,14 @@ JavaScript：
   });
 
 觀察：積木 → JS 的對應一目了然。
+「score += 1」是語句；「score &gt; 10」是值。
 </pre></div>
 
-<h2>14.5 練習</h2>
+<h2>14.6 練習</h2>
 <ol>
 <li>把「on shake → 顯示隨機 1~6」的積木切成 JavaScript。</li>
 <li>在 Python 模式寫一支「無限迴圈顯示溫度」。</li>
+<li>指出「score &gt; 10」是值積木還是語句積木？為什麼？（答案：值積木，它回傳布林值）</li>
 <li>說出積木程式對「轉文字程式」教學的三個好處。</li>
 </ol>
 
